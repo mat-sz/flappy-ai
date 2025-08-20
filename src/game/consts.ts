@@ -1,0 +1,13 @@
+export const PIPE_WIDTH = 52;
+export const PIPE_DISTANCE = 3 * PIPE_WIDTH;
+export const HOLE_HEIGHT = 120;
+export const BIRD_HEIGHT = 24;
+export const BIRD_WIDTH = 34;
+export const GRAVITY = 600;
+export const FLAP_Y_VELOCITY = 180;
+export const SCROLL_X_VELOCITY = 60;
+export const GAME_WIDTH = 360;
+export const GAME_HEIGHT = 420;
+export const START_PIPE_X = 200;
+export const MIN_HOLE_Y = 30;
+export const MAX_HOLE_Y = GAME_HEIGHT - HOLE_HEIGHT - MIN_HOLE_Y;

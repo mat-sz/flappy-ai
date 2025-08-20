@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="stylesheet" href="src/main.scss" />
+    <meta name="theme-color" content="#111111" />
+    <meta property="og:title" content="Flappy AI" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="AI-powered Flappy Bird." />
+    <title>FlappyAI</title>
+  </head>
+  <body>
+    <div id="loading">Loading...</div>
+    <div class="main">
+      <div class="center">
+        <canvas id="game"></canvas>
+      </div>
+      <div class="center">
+        <canvas id="neurons"></canvas>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 100px">Index</th>
+              <th>Gen</th>
+              <th>Source</th>
+              <th>Parents</th>
+              <th style="width: 100px">X</th>
+            </tr>
+          </thead>
+          <tbody id="birdsTbody"></tbody>
+        </table>
+      </div>
+      <div id="settings"></div>
+      <div class="center" id="chartContainer">
+        <canvas id="chart"></canvas>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

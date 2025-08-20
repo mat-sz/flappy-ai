@@ -1,0 +1,23 @@
+{
+  "name": "flappy-ai",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build --mode production",
+    "lint": "run -T eslint src",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "sass-embedded": "^1.90.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.1"
+  },
+  "packageManager": "yarn@4.9.3",
+  "dependencies": {
+    "chart.js": "^4.5.0",
+    "lil-gui": "^0.20.0"
+  }
+}
