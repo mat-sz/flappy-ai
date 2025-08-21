@@ -189,15 +189,23 @@ export class CanvasView {
       stroke,
       lineWidth = 2,
       fill,
-    }: { stroke?: string; lineWidth?: number; fill?: string } = {},
+      startAngle = 0,
+      endAngle = 2 * Math.PI,
+    }: {
+      stroke?: string;
+      lineWidth?: number;
+      fill?: string;
+      startAngle?: number;
+      endAngle?: number;
+    } = {},
   ) {
     const ctx = this.ctx;
     ctx.beginPath();
     ctx.arc(
       ...this.scalePoint(point),
       (diameter / 2) * this.scale,
-      0,
-      2 * Math.PI,
+      startAngle,
+      endAngle,
     );
 
     if (stroke) {

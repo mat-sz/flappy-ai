@@ -38,6 +38,37 @@ export function distance(a: Point, b: Point) {
   return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 }
 
+export function atan2(a: Point, b: Point, c: Point) {
+  return Math.atan2(b.y - a.y, b.x - a.x) - Math.atan2(c.y - a.y, c.x - a.x);
+}
+
+export function angle(a: Point, b: Point, c: Point) {
+  const val = atan2(a, b, c);
+
+  if (val > Math.PI) {
+    return val - 2 * Math.PI;
+  } else if (val <= -Math.PI) {
+    return val + 2 * Math.PI;
+  }
+
+  return val;
+}
+
+export function subVectors(a: Point, b: Point): Point {
+  return { x: a.x - b.x, y: a.y - b.y };
+}
+
+export function linePointWithMinimumDistance(a: Point, b: Point, d: number) {
+  const dist = distance(a, b);
+  if (dist >= d) {
+    return b;
+  }
+
+  const scale = dist / d;
+  const v = subVectors(b, a);
+  return { x: a.x + v.x / scale, y: a.y + v.y / scale };
+}
+
 export function midpoint(a: Point, b: Point): Point {
   return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
 }

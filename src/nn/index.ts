@@ -9,12 +9,12 @@ export class NeuralNetwork<
   layers;
   lastActivations?: any[];
 
-  readonly inputNames = ['dist_top', 'dist_bottom'];
+  readonly inputNames = ['dist_bottom', 'dist_top', 'angle'];
   readonly outputNames = ['flap'];
 
   constructor() {
     this.layers = [
-      new NNLinearLayer(randMatrix(3, 2)),
+      new NNLinearLayer(randMatrix(3, 3)),
       new NNTanhLayer(),
       new NNLinearLayer(randMatrix(2, 3)),
       new NNTanhLayer(),

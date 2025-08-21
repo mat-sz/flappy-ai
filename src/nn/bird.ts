@@ -7,10 +7,9 @@ import {
   PIPE_WIDTH,
 } from '$/game/consts';
 import type { Game } from '$/game';
-import { distance, normalizeValue } from '$/utils/math';
-import { Point } from '$/utils/rect';
+import { angle, distance, normalizeValue } from '$/utils/math';
 import { NeuralNetwork } from '.';
-import { Matrix2D } from './types';
+import { BirdInput, Matrix2D } from './types';
 
 const DISTANCE_RANGE = GAME_HEIGHT / 1.5;
 
@@ -20,31 +19,55 @@ export class NeuralBird extends Bird {
   }
 
   get fitness() {
-    return Math.pow(this.x, 2);
+    return Math.pow(this.x / 100, 2);
   }
 
-  getInputPointPairs(game: Game): [Point, Point][] {
+  getInputs(game: Game): BirdInput[] {
     const pipe = game.getNextPipe(this.x);
     const birdMidX = this.x + BIRD_WIDTH / 2;
     const pipeMidX = pipe.x + PIPE_WIDTH / 2;
     return [
-      [
-        { x: birdMidX, y: this.y + BIRD_HEIGHT },
-        { x: pipeMidX, y: pipe.y + HOLE_HEIGHT },
-      ],
-      [
-        { x: birdMidX, y: this.y },
-        { x: pipeMidX, y: pipe.y },
-      ],
+      {
+        type: 'distance',
+        points: [
+          { x: birdMidX, y: this.y + BIRD_HEIGHT },
+          { x: pipeMidX, y: pipe.y + HOLE_HEIGHT },
+        ],
+      },
+      {
+        type: 'distance',
+        points: [
+          { x: birdMidX, y: this.y },
+          { x: pipeMidX, y: pipe.y },
+        ],
+      },
+      {
+        type: 'angle',
+        points: [
+          { x: pipeMidX, y: pipe.y + HOLE_HEIGHT / 2 }, // Vertex
+          { x: birdMidX, y: this.y + BIRD_HEIGHT / 2 },
+          { x: birdMidX, y: pipe.y + HOLE_HEIGHT / 2 },
+        ],
+      },
     ];
   }
 
   private calculateInputs(game: Game) {
-    const pointPairs = this.getInputPointPairs(game);
+    const inputs = this.getInputs(game);
     return [
-      pointPairs.map(([a, b]) =>
-        normalizeValue(distance(a, b), DISTANCE_RANGE),
-      ),
+      inputs.map(input => {
+        switch (input.type) {
+          case 'distance':
+            return normalizeValue(distance(...input.points), DISTANCE_RANGE);
+          case 'angle': {
+            const [a, b] = input.points;
+            const val = angle(...input.points);
+            return (b.x < a.x ? -val : val) / Math.PI;
+          }
+        }
+
+        return 0;
+      }),
     ] as any as Matrix2D<1, 2>;
   }
 

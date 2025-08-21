@@ -10,9 +10,10 @@ import {
   HOLE_HEIGHT,
 } from '$/game/consts';
 import { calculateScore } from '$/game/utils';
+import { BirdInput } from '$/nn/types';
 import type { Simulation } from '$/simulation';
 import { scaleImage } from '$/utils/image';
-import { clamp } from '$/utils/math';
+import { clamp, linePointWithMinimumDistance } from '$/utils/math';
 import { Point, Rect, rectContains } from '$/utils/rect';
 import { CanvasView } from './base/canvas';
 
@@ -131,6 +132,56 @@ export class GameView extends CanvasView {
     });
   }
 
+  drawBirdInput(input: BirdInput, text: string) {
+    switch (input.type) {
+      case 'distance':
+        this.drawLine(
+          this.transformPoint(input.points[0]),
+          this.transformPoint(input.points[1]),
+          { text, stroke: 'yellow' },
+        );
+        break;
+      case 'angle':
+        {
+          let a = this.transformPoint(input.points[0]);
+          let b = this.transformPoint(input.points[1]);
+          let c = this.transformPoint(input.points[2]);
+
+          const diameter = 50;
+          b = linePointWithMinimumDistance(a, b, diameter);
+          c = linePointWithMinimumDistance(a, c, diameter);
+
+          this.drawLine(a, b, {
+            stroke: 'yellow',
+          });
+          this.drawLine(a, c, {
+            stroke: 'yellow',
+          });
+
+          const needsSwap = b.x < a.x ? b.y < c.y : b.y > c.y;
+          if (needsSwap) {
+            const temp = c;
+            c = b;
+            b = temp;
+          }
+
+          const startAngle = Math.atan2(b.y - a.y, b.x - a.x);
+          const endAngle = Math.atan2(c.y - a.y, c.x - a.x);
+
+          this.drawCircle(a, diameter, {
+            stroke: 'yellow',
+            startAngle,
+            endAngle,
+          });
+          this.drawText(text, a.x, a.y, {
+            align: b.x > a.x ? 'left' : 'right',
+            color: 'yellow',
+          });
+        }
+        break;
+    }
+  }
+
   drawBird(bird: EvolutionaryBird) {
     const rect = this.getBirdRect(bird);
     const yVelocity = clamp(
@@ -147,14 +198,9 @@ export class GameView extends CanvasView {
     if (bird.index === this.simulation.selectedIndex) {
       this.drawRect(rect, { stroke: 'yellow' });
 
-      const pointPairs = bird.getInputPointPairs(this.simulation.game);
-      for (let i = 0; i < pointPairs.length; i++) {
-        const pair = pointPairs[i];
-        this.drawLine(
-          this.transformPoint(pair[0]),
-          this.transformPoint(pair[1]),
-          { text: bird.nn.inputNames[i], stroke: 'yellow' },
-        );
+      const inputs = bird.getInputs(this.simulation.game);
+      for (let i = 0; i < inputs.length; i++) {
+        this.drawBirdInput(inputs[i], bird.nn.inputNames[i]);
       }
     }
   }
