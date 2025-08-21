@@ -3,6 +3,7 @@ import { EvolutionaryBird } from './evolution/bird';
 import { Game } from './game';
 import { BasicEventEmitter } from './utils/events';
 import { ChartView } from './view/chart';
+import { EditorView } from './view/editor';
 import { GameView } from './view/game';
 import { NeuronView } from './view/neuron';
 import { SettingsView } from './view/settings';
@@ -37,6 +38,7 @@ export class Simulation extends BasicEventEmitter<{
   tableView;
   settingsView;
   neuronView;
+  editorView;
 
   private actionTimeout: any;
   private simulationTimeout: any;
@@ -70,6 +72,11 @@ export class Simulation extends BasicEventEmitter<{
     );
     this.neuronView = new NeuronView(
       document.getElementById('neurons') as HTMLCanvasElement,
+      this,
+    );
+    this.editorView = new EditorView(
+      document.getElementById('openEditor')!,
+      document.getElementById('editor') as HTMLDialogElement,
       this,
     );
 
@@ -157,6 +164,7 @@ export class Simulation extends BasicEventEmitter<{
     this.game.reset();
     this.evolution.reset();
 
+    this.neuronView.reset();
     this.gameView.reset();
     this.tableView.update();
     this.chartView.reset();

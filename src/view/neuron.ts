@@ -55,6 +55,10 @@ export class NeuronView extends CanvasView {
     this.layerParams = layerParams;
   }
 
+  reset() {
+    this.layerParams = [];
+  }
+
   frame() {
     const ctx = this.ctx;
     const bird = this.simulation.game.birds[
@@ -94,10 +98,6 @@ export class NeuronView extends CanvasView {
         }
       }
     }
-
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'center';
-    ctx.font = '12px sans-serif';
 
     for (const layer of this.layerParams) {
       for (const neuron of layer.neurons) {

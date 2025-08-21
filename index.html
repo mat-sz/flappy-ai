@@ -21,6 +21,7 @@
       </div>
       <div class="center">
         <canvas id="neurons"></canvas>
+        <button id="openEditor">Edit</button>
       </div>
       <div>
         <table>
@@ -41,6 +42,47 @@
         <canvas id="chart"></canvas>
       </div>
     </div>
+    <dialog id="editor" closedby="any">
+      <header>
+        <button class="cancel">Close</button>
+      </header>
+      <div class="editor">
+        <div class="layersWrapper">
+          <div class="layers"></div>
+          <button id="addLayer">Add</button>
+        </div>
+        <div>
+          <ul class="inputs"></ul>
+        </div>
+        <div>
+          <canvas></canvas>
+        </div>
+      </div>
+      <footer>
+        <button class="cancel">Cancel</button>
+        <button class="save">Save</button>
+      </footer>
+      <template id="editorInputTemplate">
+        <li>
+          <label>
+            <input type="checkbox" />
+            <span class="name"></span>
+          </label>
+        </li>
+      </template>
+      <template id="editorLayerTemplate">
+        <div class="layer">
+          <select>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+          <button>Delete</button>
+        </div>
+      </template>
+    </dialog>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
