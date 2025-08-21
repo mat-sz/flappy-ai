@@ -1,29 +1,43 @@
-import { NNLinearLayer, NNTanhLayer } from './layer';
+import { NNLayer, NNLinearLayer, NNTanhLayer } from './layer';
 import { Matrix2D } from './types';
 import { randMatrix } from './utils';
 
-export class NeuralNetwork<
-  TInputColumns extends number = 2,
-  TOutputColumns extends number = 1,
-> {
-  layers;
+export interface NeuralNetworkSettings {
+  inputs: string[];
+  hiddenLayers: number[];
+}
+
+export class NeuralNetwork {
+  layers: NNLayer<any, any>[] = [];
   lastActivations?: any[];
 
-  readonly inputNames = ['dist_bottom', 'dist_top', 'angle'];
+  static settings: NeuralNetworkSettings = {
+    inputs: ['dist_bottom', 'dist_top', 'angle'],
+    hiddenLayers: [2, 3],
+  };
+
+  readonly inputNames = NeuralNetwork.settings.inputs;
   readonly outputNames = ['flap'];
 
   constructor() {
-    this.layers = [
-      new NNLinearLayer(randMatrix(3, 3)),
+    let previous = this.inputNames.length;
+    const hiddenLayers = NeuralNetwork.settings.hiddenLayers;
+
+    for (const neurons of hiddenLayers) {
+      this.layers.push(
+        new NNLinearLayer(randMatrix(neurons, previous)),
+        new NNTanhLayer(),
+      );
+      previous = neurons;
+    }
+
+    this.layers.push(
+      new NNLinearLayer(randMatrix(this.outputNames.length, previous)),
       new NNTanhLayer(),
-      new NNLinearLayer(randMatrix(2, 3)),
-      new NNTanhLayer(),
-      new NNLinearLayer(randMatrix(1, 2)),
-      new NNTanhLayer(),
-    ] as const;
+    );
   }
 
-  run(input: Matrix2D<1, TInputColumns>): Matrix2D<1, TOutputColumns> {
+  run(input: Matrix2D<1, any>): Matrix2D<1, 1> {
     let data: Matrix2D<any, any> = input;
 
     this.lastActivations = [input];

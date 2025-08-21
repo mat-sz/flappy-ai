@@ -26,30 +26,45 @@ export class NeuralBird extends Bird {
     const pipe = game.getNextPipe(this.x);
     const birdMidX = this.x + BIRD_WIDTH / 2;
     const pipeMidX = pipe.x + PIPE_WIDTH / 2;
-    return [
-      {
-        type: 'distance',
-        points: [
-          { x: birdMidX, y: this.y + BIRD_HEIGHT },
-          { x: pipeMidX, y: pipe.y + HOLE_HEIGHT },
-        ],
-      },
-      {
-        type: 'distance',
-        points: [
-          { x: birdMidX, y: this.y },
-          { x: pipeMidX, y: pipe.y },
-        ],
-      },
-      {
-        type: 'angle',
-        points: [
-          { x: pipeMidX, y: pipe.y + HOLE_HEIGHT / 2 }, // Vertex
-          { x: birdMidX, y: this.y + BIRD_HEIGHT / 2 },
-          { x: birdMidX, y: pipe.y + HOLE_HEIGHT / 2 },
-        ],
-      },
-    ];
+
+    return this.nn.inputNames
+      .map(input => {
+        switch (input) {
+          case 'dist_bottom':
+            return {
+              type: 'distance',
+              points: [
+                { x: birdMidX, y: this.y },
+                { x: pipeMidX, y: pipe.y },
+              ],
+            };
+          case 'dist_top':
+            return {
+              type: 'distance',
+              points: [
+                { x: birdMidX, y: this.y + BIRD_HEIGHT },
+                { x: pipeMidX, y: pipe.y + HOLE_HEIGHT },
+              ],
+            };
+          case 'bird_y':
+            return {
+              type: 'value',
+              value: this.y,
+            };
+          case 'angle':
+            return {
+              type: 'angle',
+              points: [
+                { x: pipeMidX, y: pipe.y + HOLE_HEIGHT / 2 }, // Vertex
+                { x: birdMidX, y: this.y + BIRD_HEIGHT / 2 },
+                { x: birdMidX, y: pipe.y + HOLE_HEIGHT / 2 },
+              ],
+            };
+        }
+
+        return undefined;
+      })
+      .filter(input => !!input) as BirdInput[];
   }
 
   private calculateInputs(game: Game) {
@@ -57,6 +72,8 @@ export class NeuralBird extends Bird {
     return [
       inputs.map(input => {
         switch (input.type) {
+          case 'value':
+            return normalizeValue(input.value, GAME_HEIGHT);
           case 'distance':
             return normalizeValue(distance(...input.points), DISTANCE_RANGE);
           case 'angle': {

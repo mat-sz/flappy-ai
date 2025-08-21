@@ -26,4 +26,9 @@ export interface BirdInputAngle {
   points: [Point, Point, Point];
 }
 
-export type BirdInput = BirdInputDistance | BirdInputAngle;
+export interface BirdInputValue {
+  type: 'value';
+  value: number;
+}
+
+export type BirdInput = BirdInputDistance | BirdInputAngle | BirdInputValue;
